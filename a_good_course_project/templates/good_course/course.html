@@ -1,0 +1,31 @@
+{% extends 'good_course/base.html' %}
+
+{% load staticfiles %}
+
+{% block body_block %}
+    <div class="page-header">
+		<h1>{{ title }}</h1>
+	</div>
+    {% if course %}
+		Lecturer : {{ lecturer }} </br>
+		School : {{ school }} </br></br>
+		Description:</br>
+		{{ desc }}</br>
+		Rating : {{rating}}/5
+		{% if user.is_authenticated %}
+			<form role="form"  id="review_form" method="post" action="{% url 'course' course.slug %}">
+				{% csrf_token %}
+				{% for field in form.visible_fields %}
+					{{ field.errors }}
+					{{ field.help_text }}<br/>
+					{{ field }}<br/>
+				{% endfor %}
+				<button class="btn btn-primary" type="submit" name="submit">Submit</button>
+			</form>
+		{% endif %}
+		
+    {% else %}
+		The specified course does not exist!
+    {% endif %}
+
+{% endblock %}

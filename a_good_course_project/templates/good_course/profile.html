@@ -1,0 +1,16 @@
+{% extends "good_course/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body_block %}
+
+<li>Username: {{user.username}}</li>
+<li>E-mail: {{user.email}}</li>
+<li>Lecturer: {{user.get_profile.lecturer}}</li>
+{% if user.get_profile.picture %}
+	<li>{{user.get_profile.picture}}</li>
+{% endif %}
+
+{% endblock %}

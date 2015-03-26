@@ -1,0 +1,76 @@
+{% extends 'good_course/base.html' %}
+
+{% load staticfiles %}
+
+{% block body_block %}
+    <div class="page-header">
+		<h1>{{ school_name }}</h1>
+	</div>
+    {% if school %}
+        <div class="container">
+		{% if top_courses %}
+			<div class="row placeholders">
+				{% for course in top_courses %}
+				<div class="col-sm-3">
+					<div class ="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title"><a href="{% url 'course'  course.slug %}">{{ course.title }}</a></h3>
+						</div>
+						<div class = "panel-body">
+							{{ course.description }}
+						</div>
+						<div class = "panel-footer">
+							{{ course.average_rating }}/5
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		{% else %}
+			<strong>No courses currently for this school.</strong>
+		{% endif %}
+		{% if mid_courses %}
+			<div class="row placeholders">
+				{% for course in mid_courses %}
+				<div class="col-sm-3">
+					<div class ="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title"><a href="{% url 'course'  course.slug %}">{{ course.title }}</a></h3>
+						</div>
+						<div class = "panel-body">
+							{{ course.description }}
+						</div>
+						<div class = "panel-footer">
+							{{ course.average_rating }}/5
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+		{% if bot_courses %}
+			<div class="row placeholders">
+				{% for course in bot_courses %}
+				<div class="col-sm-3">
+					<div class ="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title"><a href="{% url 'course'  course.slug %}">{{ course.title }}</a></h3>
+						</div>
+						<div class = "panel-body">
+							{{ course.description }}
+						</div>
+						<div class = "panel-footer">
+							{{ course.average_rating }}/5
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+		</div>
+
+    {% else %}
+		The specified school {{ school_name }} does not exist!
+    {% endif %}
+
+{% endblock %}
