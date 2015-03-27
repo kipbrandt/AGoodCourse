@@ -77,7 +77,10 @@ class Review(models.Model):
 
         def save(self, *args, **kwargs):
                 if (self.text):
+                        if(self.rating <0 or self.rating>5):
+                                self.rating = 0
                         super(Review, self).save(*args, **kwargs)
+
 
         def __unicode__(self):
                 return self.rating
