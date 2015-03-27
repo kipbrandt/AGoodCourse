@@ -3,16 +3,17 @@
 {% load staticfiles %}
 
 {% block body_block %}
+<div class="jumbotron">
     <div class="page-header">
-		<h1>{{ school_name }}</h1>
+		<h2>{{ school_name }}</h1>
 	</div>
     {% if school %}
         <div class="container">
 		{% if top_courses %}
 			<div class="row placeholders">
 				{% for course in top_courses %}
-				<div class="col-sm-3">
-					<div class ="panel panel-default">
+				<div class="col-sm-4">
+					<div class ="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title"><a href="{% url 'course'  course.slug %}">{{ course.title }}</a></h3>
 						</div>
@@ -32,8 +33,8 @@
 		{% if mid_courses %}
 			<div class="row placeholders">
 				{% for course in mid_courses %}
-				<div class="col-sm-3">
-					<div class ="panel panel-default">
+				<div class="col-sm-4">
+					<div class ="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title"><a href="{% url 'course'  course.slug %}">{{ course.title }}</a></h3>
 						</div>
@@ -51,8 +52,8 @@
 		{% if bot_courses %}
 			<div class="row placeholders">
 				{% for course in bot_courses %}
-				<div class="col-sm-3">
-					<div class ="panel panel-default">
+				<div class="col-sm-4">
+					<div class ="panel panel-primary">
 						<div class="panel-heading">
 							<h3 class="panel-title"><a href="{% url 'course'  course.slug %}">{{ course.title }}</a></h3>
 						</div>
@@ -72,5 +73,5 @@
     {% else %}
 		The specified school {{ school_name }} does not exist!
     {% endif %}
-
+</div>
 {% endblock %}

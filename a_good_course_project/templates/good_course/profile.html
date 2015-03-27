@@ -6,11 +6,26 @@
 
 {% block body_block %}
 
-<li>Username: {{user.username}}</li>
-<li>E-mail: {{user.email}}</li>
-<li>Lecturer: {{user.get_profile.lecturer}}</li>
-{% if user.get_profile.picture %}
-	<li>{{user.get_profile.picture}}</li>
-{% endif %}
-
+<div class="jumbotron">
+	<div class="row placeholders">
+		<div class="col-md-9">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h2>{{user.username}}</h2>
+				</div>
+				<ul class="list-group">
+					<li class="list-group-item"><h3>E-mail: {{user.email}}</h3></li>
+					<li class="list-group-item"><h3>{{type}}</h3></li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-3">
+			{% if picture %}
+				<img src= "/media/profile_images/{{picture}}">
+			{% else %}
+				<img alt = "Default photo" src = "/static/images/default_profile.jpg" class = "img-thumbnail">
+			{% endif %}
+		</div>
+	</div>
+</div>
 {% endblock %}

@@ -1,7 +1,8 @@
+from __future__ import division
+from decimal import *
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
-from django.core import validators
 
 class School(models.Model):
         name = models.CharField(max_length=128, unique=True)
@@ -38,18 +39,20 @@ class Course(models.Model):
                 
         school_tag = models.CharField(max_length=20, choices=school_choices)
         school = models.ForeignKey(School)
-        title = models.CharField(max_length=128, help_text ='Course title:' )
+        title = models.CharField(max_length=128,)
         slug = models.SlugField(unique=True)
-        description = models.CharField(max_length=256, help_text ='Description: (max 256 characters)')
-        lecturer = models.CharField(max_length=128, help_text ='Lecturer:')
+        description = models.CharField(max_length=256)
+        lecturer = models.CharField(max_length=128)
         total_rating = models.IntegerField(default=0)
         quantity_ratings = models.IntegerField(default=0)
-        average_rating = models.FloatField()
+        average_rating = models.DecimalField(max_digits=2, decimal_places=1)
+
+        raters = models.ManyToManyField(User, blank=True)
 
         def save(self, *args, **kwargs):
                 self.slug = slugify(self.title)
                 if (self.quantity_ratings > 0):
-                        self.average_rating = self.total_rating/self.quantity_ratings
+                        self.average_rating = Decimal(self.total_rating/self.quantity_ratings)
                 else :
                         self.average_rating = 0
                 super(Course, self).save(*args, **kwargs)
@@ -58,21 +61,35 @@ class Course(models.Model):
                 return self.title
 
 class Review(models.Model):
-        
-        rating = models.IntegerField(validators=[validators.MaxValueValidator(5), validators.MinValueValidator(1)], help_text='Rate this course between 1 and 5')
-        #comment = models.CharField(max_length=256, blank=True, help_text='Leave a comment')
+
+        course = models.ForeignKey(Course)
+        user = models.ForeignKey(User)
+        rating_choices = (
+                (0,''),
+                (1,'1'),
+                (2,'2'),
+                (3,'3'),
+                (4,'4'),
+                (5,'5'),
+                )
+        rating = models.IntegerField(default=0, help_text='Rate this course between 1 and 5', choices=rating_choices)
+        text = models.CharField(max_length=256, blank=True)
+
+        def save(self, *args, **kwargs):
+                if (self.text):
+                        super(Review, self).save(*args, **kwargs)
 
         def __unicode__(self):
                 return self.rating
+
         
 class UserProfile(models.Model):
 
     user = models.OneToOneField(User)
 
-    # The additional attributes we wish to include.
-    # courses
-    lecturer = models.BooleanField(default=False)
-    picture = models.ImageField(upload_to='profile_images', blank=True)
+    lecturer = models.BooleanField(default=False, help_text='Lecturer?')
+    picture = models.ImageField(upload_to='profile_images/', blank=True, help_text='Picture?')
+
 
     def __unicode__(self):
         return self.user.username

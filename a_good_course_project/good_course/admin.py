@@ -1,5 +1,5 @@
 from django.contrib import admin
-from good_course.models import School, Course, UserProfile
+from good_course.models import School, Course, UserProfile, Review
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ['title', 'school', 'description']
@@ -10,3 +10,4 @@ class SchoolAdmin(admin.ModelAdmin):
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(UserProfile)
+admin.site.register(Review)

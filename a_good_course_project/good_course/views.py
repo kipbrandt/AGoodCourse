@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 from good_course.forms import CourseForm, UserForm, UserProfileForm, ReviewForm
-from good_course.models import School, Course
+from good_course.models import School, Course, Review, UserProfile
 
 from datetime import datetime
 
@@ -46,6 +46,7 @@ def school(request, school_tag):
 def course(request, course_name_slug):
 
     context_dict = {}
+    hide = False
 
     try:
         course = Course.objects.get(slug=course_name_slug)
@@ -57,17 +58,38 @@ def course(request, course_name_slug):
         context_dict['rating'] = course.average_rating
         context_dict['course'] = course
 
+        comment_list = Review.objects.filter(course=course).all
+        context_dict['comments'] = comment_list
+    
+        if request.user.is_authenticated():
+            user_profile = UserProfile.objects.filter(user=request.user)[0]
+            if user_profile.lecturer:
+                hide = True
+            elif course.raters:
+                for rater in course.raters.all():
+                    if rater == request.user:
+                        hide = True
+        
         if request.method == 'POST':
             form = ReviewForm(request.POST)
             if form.is_valid():
-                course.total_rating = course.total_rating + form.cleaned_data['rating']
-                course.quantity_ratings = course.quantity_ratings + 1
-                course.save()
+                review = form.save(commit=False)
+                review.course=course
+                review.user=request.user
+                review.save()
+                comment_list = Review.objects.filter(course=course).all
+                context_dict['comments'] = comment_list
+                if form.cleaned_data['rating']!=0:
+                    course.total_rating = course.total_rating + form.cleaned_data['rating']
+                    course.quantity_ratings = course.quantity_ratings + 1
+                    course.raters.add(request.user)
+                    course.save()
+                    context_dict['rating'] = course.average_rating
+                    return home(request)
             else :
                 print form.errors
 
-        else:
-            form = ReviewForm()
+        form = ReviewForm(hide=hide)
             
     except Course.DoesNotExist:
         pass
@@ -93,7 +115,7 @@ def add_course(request):
 
 def register_profile(request):
     if request.method == 'POST':
-        form = UserProfileForm(request.POST)
+        form = UserProfileForm(request.POST, request.FILES)
 
         if form.is_valid():
             profile = form.save(commit=False)
@@ -110,7 +132,12 @@ def register_profile(request):
 
 def profile(request):
     context_dict = {}
-
+    user_profile = UserProfile.objects.filter(user=request.user)[0]
+    context_dict['picture'] = user_profile.picture
+    if (user_profile.lecturer):
+        context_dict['type'] = 'Lecturer'
+    else:
+        context_dict['type'] = 'Student'
 
     return render(request, 'good_course/profile.html', context_dict)
 

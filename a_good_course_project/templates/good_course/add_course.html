@@ -2,22 +2,36 @@
 
 {% block body_block %}
 
-	<form role="form"  id="course_form" method="post" action="/AGoodCourse/add_course/">
-		<h2 class="form-signin-heading">Add a Course </h2>
-		{% csrf_token %}
-		{% for hidden in form.hidden_fields %}
-			{{ hidden }}
-		{% endfor %}
+<div class="jumbotron">
+	<h1>Add a Course</h1>
+	<p>
+		<form role="form"  id="course_form" method="post" action="/AGoodCourse/add_course/">
+			{% csrf_token %}
+			{% for hidden in form.hidden_fields %}
+				{{ hidden }}
+			{% endfor %}
+			
+			<div class="container">
+				{% for field in form.visible_fields %}
+					<div class ="panel panel-danger">
+						{% if field.errors  %}
+							<div class = "panel-heading">
+								{{ field.errors }}
+							</div>
+						{% endif %}
+						<div class = "panel-body">
+							{{ field.help_text }}<br/>
+							{{ field }}
+						</div>
 
-		{% for field in form.visible_fields %}
-			{{ field.errors }}
-			{{ field.help_text }}<br/>
-			{{ field }}<br/>
-		{% endfor %}
-
-		<br/>
-		<button class="btn btn-primary" type="submit" name="submit">Add Course</button>
-	</form>
+					</div>
+				{% endfor %}
+			</div>
+			<br/>
+			<button class="btn btn-primary" type="submit" name="submit">Add Course</button>
+		</form>
+	</p>
+</div>
 
 {% endblock %}
 

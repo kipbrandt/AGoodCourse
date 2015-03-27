@@ -3,29 +3,82 @@
 {% load staticfiles %}
 
 {% block body_block %}
-    <div class="page-header">
-		<h1>{{ title }}</h1>
-	</div>
-    {% if course %}
-		Lecturer : {{ lecturer }} </br>
-		School : {{ school }} </br></br>
-		Description:</br>
-		{{ desc }}</br>
-		Rating : {{rating}}/5
+{% if course %}
+	<div class="jumbotron">
+		<div class="row placeholders">
+			<div class="col-md-9">
+				<div class="page-header">
+					<h1>{{ title }}</h1>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<h2>{{ rating }}/5</h2>
+			</div>
+		</div>
+		<div class="row placeholders">
+			<div class="col-md-6">
+				<div class ="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class="panel-title">Lecturer</h3>
+					</div>
+					<div class = "panel-body">
+						{{ lecturer }}
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class ="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class="panel-title">School</h3>
+					</div>
+					<div class = "panel-body">
+						{{ school }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class ="panel panel-primary">
+			<div class="panel-body">
+				{{ desc }}
+			</div>
+		</div>
 		{% if user.is_authenticated %}
-			<form role="form"  id="review_form" method="post" action="{% url 'course' course.slug %}">
-				{% csrf_token %}
-				{% for field in form.visible_fields %}
-					{{ field.errors }}
-					{{ field.help_text }}<br/>
-					{{ field }}<br/>
-				{% endfor %}
-				<button class="btn btn-primary" type="submit" name="submit">Submit</button>
-			</form>
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">Rate this course</h3>
+				</div>
+				<div class="panel-body">
+					<form role="form"  id="review_form" method="post" action="{% url 'course' course.slug %}">
+						{% csrf_token %}
+						<div>
+							{{ form.rating }}
+						</div>
+						<div>
+							{{ form.text }}
+						</div>
+						<div>
+							<button class="btn btn-primary" type="submit" name="submit">Submit</button>
+						</div>
+					</form>			
+				</div>
+			</div>
 		{% endif %}
-		
-    {% else %}
-		The specified course does not exist!
-    {% endif %}
+	</div>
+	{% if comments %}
+		<Strong>Comments<Strong>
+		{% for comment in comments %}
+			<div class ="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">{{ comment.user }}</a></h3>
+				</div>
+				<div class = "panel-body">
+					{{ comment.text }}
+				</div>
+			</div>
+		{% endfor %}
+	{% endif %}
+{% else %}
+	The specified course does not exist!
+{% endif %}
 
 {% endblock %}
